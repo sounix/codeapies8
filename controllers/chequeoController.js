@@ -110,14 +110,16 @@ const chequeoController = async (req, res) => {
   `;
 
   let queryCompras = `
-    SELECT
-        Fecha,Documento,Referencia,Tercero,NombreTercero,
+    SELECT TOP 3
+        Fecha,
+        --Documento,Referencia,Tercero,
+        NombreTercero,
         --TipoDocumento,Estatus,Articulo,Nombre,
         CantidadRegularUC,CostoUnitarioNetoUC
     FROM QVDEMovAlmacen
     WHERE TipoDocumento = 'C' AND Estatus = 'E'
         AND Articulo = '${articulo}'
-    ORDER BY Fecha
+    ORDER BY Fecha DESC
   `;
 
   let All = {
@@ -126,6 +128,7 @@ const chequeoController = async (req, res) => {
     Relacion: null,
     ExistActualUC: null,
     Stock30UC: null,
+    CostoNetUCBO: null,
     CostoExistActual: null,
     existencias: [],
     compras: []
@@ -150,6 +153,9 @@ const chequeoController = async (req, res) => {
         All.ExistActualUC += item.ExistUC;
         All.Stock30UC += item.Stock30UC;
         All.CostoExistActual += item.CostoExist;
+
+        All.CostoNetUCBO += item.CostoNetUC;
+        
         All.existencias.push(item);
     })
     zr.map(item => {
